@@ -1,0 +1,150 @@
+[project]
+name = "rinha-backend"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "viictor-m", email = "magalhaes.a.victor@gmail.com"},
+]
+
+
+requires-python = "==3.12.*"
+readme = "README.md"
+
+license = { text = "MIT" }
+dependencies = [
+    "fastapi>=0.109.2",
+    "pydantic>=2.6.1",
+    "pydantic-settings>=2.1.0",
+    "pymongo>=4.6.1",
+    "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "uvicorn>=0.27.0",
+    "ipykernel>=6.29.2",
+]
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+show_error_codes = true
+warn_return_any = true
+
+[[tool.mypy.overrides]]
+module = [
+    "boto3",
+    "botocore.exceptions",
+    "requests",
+    "pandas",
+]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+force_single_line = true
+atomic = true
+include_trailing_comma = true
+lines_after_imports = 2
+lines_between_types = 1
+use_parentheses = true
+filter_files = true
+
+[tool.flake8]
+max-line-length = 88
+max-complexity = 10
+exclude = [
+    ".venv",
+    ".git",
+    "__pycache__",
+    "*.egg-info",
+    ".pytest_cache",
+    ".mypy_cache",
+]
+ignore = [ # alertas e erros por conta do black
+    "E203", # espaço antes de ':'
+    "E225", # sem espaço ao redor de operadores 
+    "W503", # quebra de linha antes de um operador binário
+    "W504", # quebra de linha após um operador binário line
+]
+
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore = "D401"
+match = '(?!test_|tests).*\.py' # ignora arquivos python contendo "test_" ou "tests"
+match-dir = "[^\tests|.].*"     # ignora diretórios iniciados com "." ou "tests"[build-system]
+
+
+[tool.refurb]
+disable = ["FURB112"]
+
+[tool.pdm]
+distribution = false
+[tool.pdm.dev-dependencies]
+code-quality = [
+    "isort>=5.12.0",
+    "black>=23.7.0",
+    "pydocstyle>=6.3.0",
+    "autoflake>=2.2.0",
+    "Flake8-pyproject>=1.2.3",
+    "pyupgrade>=3.11.2",
+    "refurb>=1.21.0",
+    "pre-commit>=3.4.0",
+    "mypy>=1.5.1",
+]
+testing = [
+    "pytest>=7.4.2",
+    "pytest-cov>=4.1.0",
+    "pytest-cookies>=0.7.0",
+    "pytest-mock>=3.11.1",
+]
+
+
+[tool.pdm.scripts]
+flake8 = {cmd = ["flake8", "src"]}
+
+autoflake = { cmd = [
+    "autoflake",
+    "--remove-all-unused-imports",
+    "--recursive",
+    "--remove-unused-variables",
+    "--in-place",
+    "src",
+    "tests",
+    "--exclude=__init__.py",
+] }
+
+
+black = { cmd = ["black", "src", "tests"] }
+isort = { cmd = ["isort", "src", "tests"] }
+mypy = { cmd = ["mypy", "src", "tests"] }
+refurb = { cmd = ["refurb", "src", "tests"] }
+pyupgrade = { cmd = [
+    "pyupgrade",
+    "--py36-plus",
+    "--py37-plus",
+    "--py38-plus",
+    "--py39-plus",
+    "--py310-plus",
+] }
+pydocstyle = { cmd = ["pydocstyle", "src"] }
+aprimorar = { composite = ["pyupgrade", "refurb"] }
+formatar = { composite = ["autoflake", "black", "isort"] }
+testar = { cmd = ["pytest", "--cov=src"] }
+verificar-tudo = { composite = [
+    "aprimorar",
+    "formatar",
+    "flake8",
+    "mypy",
+    "pydocstyle",
+    "testar",
+] }
+
+gerar-requirements = { cmd = [
+    "pdm",
+    "export",
+    "-o",
+    "requirements.txt",
+    "--without-hashes",
+] }
