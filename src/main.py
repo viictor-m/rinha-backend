@@ -1,6 +1,7 @@
 """Módulo responsável por rodar a API."""
 
 from fastapi import FastAPI
+from src.clientes.rotas import rotas
 
 
 app = FastAPI(title="API de crébitos da rinha de backend.")
@@ -17,3 +18,5 @@ def hello() -> str:
         Mensagem de boas-vindas.
     """
     return "API de crébitos da rinha de backend está on e roteando!"
+
+app.include_router(rotas)
