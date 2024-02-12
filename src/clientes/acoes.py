@@ -4,6 +4,7 @@ from fastapi import status
 from fastapi.exceptions import HTTPException
 
 from src.clientes.esquemas import CorpoTransacao
+from src.clientes.esquemas import Extrato
 from src.clientes.esquemas import RegistroTransacao
 from src.clientes.esquemas import Transacao
 from src.db import banco
@@ -61,3 +62,26 @@ def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
         upsert=True,
     )
     return modelo_usuario
+
+
+def gerar_extrato(id: int) -> dict:
+    """
+    Gera o extrato de um cliente.
+
+    Parameters
+    ----------
+    id : int
+        ID do cliente.
+
+    Returns
+    -------
+    Extrato
+        Extrato com limite, saldo e últimas transações.
+    """
+    dados = banco.clientes.find_one({"id": id}, {"_id": 0, "id": 0})
+    if not dados:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado."
+        )
+    extrato = Extrato(**dados)
+    return extrato.resposta
