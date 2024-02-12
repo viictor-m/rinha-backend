@@ -50,7 +50,7 @@ class RegistroTransacao(CorpoTransacao):
     """
 
     registrada_em: datetime = Field(
-        default=datetime.now(tz=tz.gettz("America/Sao_Paulo"))
+        default=datetime.now(tz=tz.gettz("America/Sao_Paulo")).replace(tzinfo=None)
     )
 
 
