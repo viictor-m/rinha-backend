@@ -54,7 +54,7 @@ def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
                 "ultimas_transacoes": {
                     "$each": [registro_transacao.model_dump()],
                     "$sort": {"registrada_em": -1},
-                    "$slice": -10,
+                    "$slice": 10,
                 }
             },
         },
