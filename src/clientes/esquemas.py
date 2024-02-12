@@ -77,3 +77,4 @@ class Transacao(BaseModel):
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Saldo não pode ser menor que limite.",
             )
+        return valor
