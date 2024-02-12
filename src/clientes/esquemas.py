@@ -50,7 +50,7 @@ class RegistroTransacao(CorpoTransacao):
     """
 
     registrada_em: datetime = Field(
-        default=datetime.now(tz=tz.gettz("America/Sao_Paulo")).replace(tzinfo=None)
+        default_factory=datetime.now
     )
 
 
@@ -75,6 +75,6 @@ class Transacao(BaseModel):
         if valor < (-1 * info.data["limite"]):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Saldo não pode ser menor que limite.",
+                detail="Saldo insuficiente para completar transação.",
             )
         return valor
