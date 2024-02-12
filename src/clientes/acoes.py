@@ -45,12 +45,19 @@ def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
             detail="Tipo de transação informada não reconhecida.",
         )
 
-    registro_transacao = RegistroTransacao(**modelo_usuario)
+    registro_transacao = RegistroTransacao(**corpo.model_dump())
     banco.clientes.update_one(
         {"id": id},
         {
             "$set": {"saldo": modelo_usuario.saldo},
-            "$push": {"ultimas_transacoes": registro_transacao},
+            "$push": {
+                "ultimas_transacoes": {
+                    "$each": [registro_transacao.model_dump()],
+                    "$sort": {"registrada_em": -1},
+                    "$slice": -10,
+                }
+            },
         },
+        upsert=True,
     )
     return modelo_usuario
