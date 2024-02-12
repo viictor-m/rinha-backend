@@ -1,15 +1,16 @@
 """Esquemas pydantic utilizados para padronização de entradas e saídas da API."""
 
 from datetime import datetime
+from typing import Any
 from typing import Literal
 
-from dateutil import tz
 from fastapi import status
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
 from pydantic import ValidationInfo
+from pydantic import computed_field
 from pydantic import field_validator
 
 
@@ -49,9 +50,7 @@ class RegistroTransacao(CorpoTransacao):
     registrada_em : datetime
     """
 
-    registrada_em: datetime = Field(
-        default_factory=datetime.now
-    )
+    registrada_em: datetime = Field(default_factory=datetime.now)
 
 
 class Transacao(BaseModel):
@@ -78,3 +77,41 @@ class Transacao(BaseModel):
                 detail="Saldo insuficiente para completar transação.",
             )
         return valor
+
+
+class Extrato(BaseModel):
+    """
+    Classe para estrutura de dados do extrato.
+
+    Parameters
+    ----------
+    saldo : int
+        Saldo atualizado do usuário.
+    limite : int
+        Limite de crédito do usuário.
+    ulimas_transacoes : list[RegistroTransacao]
+        Registro das últimas 10 transações.
+    """
+
+    saldo: int
+    limite: int
+    ultimas_transacoes: list[RegistroTransacao]
+
+    @computed_field
+    def resposta(self) -> dict[str, Any]:
+        """
+        Resposta da API no formato pedido da rinha.
+
+        Returns
+        -------
+        dict[str, Any]
+            Reposta no fomato correto.
+        """
+        return {
+            "saldo": {
+                "total": self.saldo,
+                "data_extrato": datetime.now(),
+                "limite": self.limite,
+            },
+            "ultimas_transacoes": self.ultimas_transacoes,
+        }
