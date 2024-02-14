@@ -13,7 +13,7 @@ rotas = APIRouter()
 
 
 @rotas.post("/{id}/transacoes")
-def transacionar(id: int, corpo: CorpoTransacao) -> JSONResponse:
+async def transacionar(id: int, corpo: CorpoTransacao) -> JSONResponse:
     """
     Realiza a transação pedida ao ID de entrada.
 
@@ -32,12 +32,12 @@ def transacionar(id: int, corpo: CorpoTransacao) -> JSONResponse:
     JSONResponse
         Reposta contendo limite e saldo atualizado do usuário.
     """
-    novos_valores = fazer_transacao(id, corpo)
+    novos_valores = await fazer_transacao(id, corpo)
     return JSONResponse(content=jsonable_encoder(novos_valores))
 
 
 @rotas.get("/{id}/extrato")
-def extrato(id: int) -> JSONResponse:
+async def extrato(id: int) -> JSONResponse:
     """
     Gera extrato do cliente.
 
@@ -51,5 +51,5 @@ def extrato(id: int) -> JSONResponse:
     JSONResponse
         Resposta com valores de limite, saldo e últimas 10 transações.
     """
-    valores = gerar_extrato(id)
+    valores = await gerar_extrato(id)
     return JSONResponse(content=jsonable_encoder(valores))

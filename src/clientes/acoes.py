@@ -10,7 +10,7 @@ from src.clientes.esquemas import Transacao
 from src.db import banco
 
 
-def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
+async def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
     """
     Registra as transações de crédito/débito no banco de dados.
 
@@ -26,9 +26,10 @@ def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
     Transacao
         Saldo e limite pós transação realizada.
     """
-    dados_usuario = banco.clientes.find_one(
+    dados_usuario = await banco.clientes.find_one(
         {"id": id}, {"_id": 0, "saldo": 1, "limite": 1}
     )
+
     if not dados_usuario:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado."
@@ -47,7 +48,7 @@ def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
         )
 
     registro_transacao = RegistroTransacao(**corpo.model_dump())
-    banco.clientes.update_one(
+    await banco.clientes.update_one(
         {"id": id},
         {
             "$set": {"saldo": modelo_usuario.saldo},
@@ -64,7 +65,7 @@ def fazer_transacao(id: int, corpo: CorpoTransacao) -> Transacao:
     return modelo_usuario
 
 
-def gerar_extrato(id: int) -> dict:
+async def gerar_extrato(id: int) -> dict:
     """
     Gera o extrato de um cliente.
 
@@ -78,7 +79,7 @@ def gerar_extrato(id: int) -> dict:
     Extrato
         Extrato com limite, saldo e últimas transações.
     """
-    dados = banco.clientes.find_one({"id": id}, {"_id": 0, "id": 0})
+    dados = await banco.clientes.find_one({"id": id}, {"_id": 0, "id": 0})
     if not dados:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado."

@@ -1,11 +1,10 @@
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from src import config
 from src.logit import log
 
 
-cliente = MongoClient(config.db.mongodb_uri)
+cliente = AsyncIOMotorClient(config.db.mongodb_uri)
 banco = cliente[config.db.banco]
 
 try:
