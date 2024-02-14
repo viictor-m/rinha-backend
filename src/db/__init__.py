@@ -5,9 +5,7 @@ from src import config
 from src.logit import log
 
 
-cliente = MongoClient(
-    config.db.mongodb_uri, server_api=ServerApi(config.db.mongodb_api_servidor)
-)
+cliente = MongoClient(config.db.mongodb_uri)
 banco = cliente[config.db.banco]
 
 try:
