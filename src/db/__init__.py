@@ -4,7 +4,7 @@ from src import config
 from src.logit import log
 
 
-cliente = AsyncIOMotorClient(config.db.mongodb_uri)
+cliente = AsyncIOMotorClient(config.db.mongodb_uri, maxPoolSize=15)
 banco = cliente[config.db.banco]
 
 try:
