@@ -14,17 +14,12 @@ license = { text = "MIT" }
 dependencies = [
     "fastapi>=0.109.2",
     "pydantic>=2.6.1",
-    "pydantic-settings>=2.1.0",
+    "pydantic-settings>=2.2.0",
     "rich>=13.7.0",
     "uvicorn>=0.27.1",
     "motor>=3.3.2",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "uvicorn>=0.27.0",
-    "ipykernel>=6.29.2",
-]
 
 [tool.mypy]
 check_untyped_defs = true
